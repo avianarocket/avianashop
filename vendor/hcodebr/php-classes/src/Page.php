@@ -17,16 +17,16 @@ class Page {
 
 
     //criando os metodos...
-    //metodo contrutor, passando opcoes, 
-    public function __construct($opts = array())
+    //metodo contrutor, passando opcoes || passando $tpl_dir por conta da PageAdmin
+    public function __construct($opts = array(), $tpl_dir = "/views/")
     {
         //juntar as variaveis das options, se nao for enviado nada, ou opts se vier do usuario
         $this->options = array_merge($this->default, $opts);
         //configurando o template Rain
         $config = array(
-            "tpl_dir"       => $_SERVER["DOCUMENT_ROOT"]."/views/",
-            "cache_dir"     => $_SERVER["DOCUMENT_ROOT"]."/views-cache/",
-            "debug"         => false // set to false to improve the speed
+            "tpl_dir"       => $_SERVER["DOCUMENT_ROOT"] . $tpl_dir,
+            "cache_dir"     => $_SERVER["DOCUMENT_ROOT"] . "/views-cache/",
+            "debug"         => true // set to false to improve the speed
         );
 
         Tpl::configure( $config );
