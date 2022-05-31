@@ -6,8 +6,18 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit35c86562a794009fdf78d5e57d64bfed
 {
-    public static $fallbackDirsPsr4 = array (
-        0 => __DIR__ . '/..' . '/avianarocket/php-classes/src',
+    public static $prefixLengthsPsr4 = array (
+        'H' => 
+        array (
+            'Hcode\\' => 6,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Hcode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/hcodebr/php-classes/src',
+        ),
     );
 
     public static $prefixesPsr0 = array (
@@ -41,7 +51,8 @@ class ComposerStaticInit35c86562a794009fdf78d5e57d64bfed
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->fallbackDirsPsr4 = ComposerStaticInit35c86562a794009fdf78d5e57d64bfed::$fallbackDirsPsr4;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit35c86562a794009fdf78d5e57d64bfed::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit35c86562a794009fdf78d5e57d64bfed::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit35c86562a794009fdf78d5e57d64bfed::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit35c86562a794009fdf78d5e57d64bfed::$classMap;
 
