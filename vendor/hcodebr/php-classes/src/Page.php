@@ -12,7 +12,9 @@ class Page {
     private $options = []; // recebe ['data']
     //atributo de opts defaut
     private $default = [
-        "data"=>[] //dados da variavel
+        "header" => true, //carregar
+        "footer" => true, //carregar
+        "data"   =>[] //dados padrão da default
     ];
 
 
@@ -44,6 +46,8 @@ class Page {
         //chama o setData + option com a variavel data
         $this->setData($this->options["data"]);
 
+        //valodar se esta true ou false antes de desenhar....
+        if ($this->options["header"] === true)
         //desenhando o Tpl na tela
         $this->tpl->draw("header");
 
@@ -85,6 +89,8 @@ class Page {
     //metodo destrutor
     public function __destruct()
     {
+        //valodar se esta true ou false antes de desenhar....
+        if ($this->options["footer"] === true)
         //criando o rodape e fechando o Tpl
         $this->tpl->draw("footer");
     }
