@@ -170,7 +170,84 @@ $app->post('/admin/users/:iduser', function($iduser) {
 });
 //fim rota para salvar criação dos usuarios do Admin
 
+//rota Page esqueci a senha//////////////////////////////////
+$app->get("/admin/forgot", function(){
+	//passar valores do contrutor | desabilitar o head e footer
+	$page = new PageAdmin([
+		"header" =>false,
+		"footer" =>false
+	]);
+	//desenhando pagina com o setTpl que criamos
+	$page->setTpl("forgot");	
 
+});
+
+//rota form esqueci a senha forgot
+$app->post("/admin/forgot", function(){
+	//receber email pelo bwouser com metodo no USer
+	$user = User::getForgot($_POST["email"]);
+	//redireciona
+	header("Location: /admin/forgot/sent");
+	//para execução
+	exit;
+
+});
+
+//rota da page forgot sent
+$app->get("/admin/forgot/sent", function(){
+	//passar valores do contrutor | desabilitar o head e footer
+	$page = new PageAdmin([
+		"header" =>false,
+		"footer" =>false
+	]);
+	//desenhando pagina com o setTpl que criamos
+	$page->setTpl("forgot-sent");
+
+});
+
+//rota da page reset
+$app->get("/admin/forgot/reset", function(){
+	//ppegar e validar o codigo que foi no email
+	$user = User::validForgotDecrypt($_GET["code"]);
+	//passar valores do contrutor | desabilitar o head e footer
+	$page = new PageAdmin([
+		"header" =>false,
+		"footer" =>false
+	]);
+	//desenhando pagina com o setTpl que criamos
+	$page->setTpl("forgot-reset", array(
+		"name"  =>$user["desperson"],
+		"code"  =>$_GET["code"]
+	));
+
+});
+
+//rota post reset
+$app->post("/admin/forgot/reset", function(){
+	//ppegar e validar o codigo que foi no email
+	$forgot = User::validForgotDecrypt($_POST["code"]);
+	//salvado no banco de dados
+	User::setForgotUsed($forgot["idrecovery"]);
+	//carregar os dados do usuario
+	$user = new User();
+	$user->get((int)$forgot["iduser"]);
+	//criando hash da senha
+	$password = password_hash($_POST["password"], PASSWORD_DEFAULT, [
+		"cost" => 12
+	]);
+	//criar o rash da senha nova
+	$user->setPassword($password);
+	//chamar template
+	//passar valores do contrutor | desabilitar o head e footer
+	$page = new PageAdmin([
+		"header" =>false,
+		"footer" =>false
+	]);
+	//desenhando pagina com o setTpl que criamos
+	$page->setTpl("forgot-reset-success");
+
+
+});
 
 
 // rodar tudo o projeto
