@@ -70,7 +70,75 @@ class User extends Model{
         //linmpando a SESSION
         $_SESSION[User::SESSION] = null;
     }
+
+    //metodo para listar todos os usuarios | unindo duas tabelas com JOIN A E B
+    public static function listAll()
+    {
+        //chamar o classe Sql
+        $sql = new Sql();
+        //SELECT
+        return $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING(idperson) ORDER BY b.desperson");
+
+    }
+
+    //metodo para salvar usuarios no banco
+    public function save()
+    {
+        $sql = new Sql();
+        //select da procedure
+        $results = $sql->select("CALL   sp_users_save(:desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", array(
+            ":desperson"    => $this->getdesperson(),
+            ":deslogin"     => $this->getdeslogin(),
+            ":despassword"  => $this->getdespassword(),
+            ":desemail"     => $this->getdesemail(),
+            ":nrphone"      => $this->getnrphone(),
+            ":inadmin"      => $this->getinadmin()
+        ));
+
+        $this->setData($results[0]);
+    }
+
+    //metodo para pegar o id usuario
+    public function get($iduser)
+    {
+        // chama select
+        $sql = new Sql();
+        //listar o ususario pelo id
+        $results = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING(idperson) WHERE a.iduser = :iduser", array(
+            //setando valor
+            ":iduser" => $iduser
+        ));
+
+        $this->setData($results[0]);
+    }
+
+    //metodo para update / salvar usuarios no banco
+    public function update()
+    {
+        $sql = new Sql();
+        //select da procedure
+        $results = $sql->select("CALL   sp_usersupdate_save(:iduser, :desperson, :deslogin, :despassword, :desemail, :nrphone, :inadmin)", array(
+            ":iduser"       => $this->getiduser(),
+            ":desperson"    => $this->getdesperson(),
+            ":deslogin"     => $this->getdeslogin(),
+            ":despassword"  => $this->getdespassword(),
+            ":desemail"     => $this->getdesemail(),
+            ":nrphone"      => $this->getnrphone(),
+            ":inadmin"      => $this->getinadmin()
+        ));
+
+        $this->setData($results[0]);
+    }
     
+    //metodo deletar
+    public function delete()
+    {
+        $sql = new Sql();
+        $sql->query("CALL sp_users_delete(:iduser)", array(
+            //setando dados
+            ":iduser" =>$this->getiduser()
+        ));
+    }
 }
 
 ?>

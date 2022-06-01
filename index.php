@@ -65,6 +65,114 @@ $app->get('/admin/logout', function() {
 });
 //fim rota para Deslogar do Admin/Login
 
+//rota para listar todos os usuarios do Admin
+$app->get('/admin/users', function() {
+	//verifica se o admim esta logado
+	User::verifyLogin();
+	//listar todos os usuarios
+	$users = User::listAll();
+	//chamando PageAdmin
+	$page = new PageAdmin();
+	//chamando template
+	$page->setTpl("users", array(
+		//pegando os valores na chave users
+		"users" => $users
+	));
+});
+//fim rota para listar todos os usuarios do Admin
+
+//rota para criar todos os usuarios do Admin
+$app->get('/admin/users/create', function() {
+	//verifica se o admim esta logado
+	User::verifyLogin();
+	//chamando PageAdmin
+	$page = new PageAdmin();
+	//chamando template
+	$page->setTpl("users-create");
+});
+//fim rota para criar todos os usuarios do Admin
+
+//rota para deletar os usuarios do Admin
+$app->get('/admin/users/:iduser/delete', function($iduser) {
+	//verifica se o admim esta logado
+	User::verifyLogin();
+	//criar objeto
+	$user = new User();
+	//chamando o get iduser garantindo que ser inteiro
+	$user->get((int)$iduser);
+	//deletando
+	$user->delete();
+	//redirecionando...
+	header("Location: /admin/users");
+	//parar execução
+	exit;
+	
+});
+//fim rota para deletar os usuarios do Admin
+
+//rota para atualizar dados dos usuarios do Admin
+$app->get('/admin/users/:iduser', function($iduser) {
+	//verifica se o admim esta logado
+	User::verifyLogin();
+	//chama user
+	$user = new User();
+	//chamando o get iduser garantindo que ser inteiro
+	$user->get((int)$iduser);
+	//chamando PageAdmin
+	$page = new PageAdmin();
+	//chamando template
+	$page->setTpl("users-update", array(
+		//pegando valores 
+		"user" => $user->getValues()
+	));
+});
+//fim rota para atualizar dados dos usuarios do Admin
+
+//rota para salvar criação dos usuarios do Admin
+$app->post('/admin/users/create', function() {
+	//verifica se o admim esta logado
+	User::verifyLogin();
+	//chamar objeto User
+	$user = new User();
+	//verificar se inadim foi definido? se sim = 1 caso nao = 0
+	$_POST["inadmin"] = (isset($_POST["inadmin"]))? 1 : 0;
+	//chamar set data para pegar os dados das tabelas
+	$user->setData($_POST);
+	//salvar
+	$user->save();
+	//redireciona para usuarios
+	header("Location: /admin/users");
+	//para execução
+	exit;
+	
+});
+//fim rota para salvar criação dos usuarios do Admin
+
+//rota para salvar edição dos usuarios do Admin
+$app->post('/admin/users/:iduser', function($iduser) {
+	//verifica se o admim esta logado
+	User::verifyLogin();
+	//cria objeto User
+	$user = new User();
+	//verificar se inadim foi definido? se sim = 1 caso nao = 0
+	$_POST["inadmin"] = (isset($_POST["inadmin"]))? 1 : 0;
+	//pega dados pelo id inteiro
+	$user->get((int)$iduser);
+	//setando os dados
+	$user->setData($_POST);
+	//fazerndo update/salvando
+	$user->update();
+	//redirecionando
+	header("Location: /admin/users");
+	//para execução
+	exit;
+	
+});
+//fim rota para salvar criação dos usuarios do Admin
+
+
+
+
 // rodar tudo o projeto
 $app->run();
 
