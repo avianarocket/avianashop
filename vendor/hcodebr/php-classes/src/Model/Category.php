@@ -94,6 +94,9 @@ class Category extends Model{
         ));
 
         $this->setData($results[0]);
+        //atualiza as categorias no fron
+        Category::updateFile();     
+
     }
 
     //metodo para pegar categoria pelo id
@@ -116,7 +119,27 @@ class Category extends Model{
         $sql->select("DELETE FROM tb_categories WHERE idcategory = :idcategory", [
             ":idcategory" => $this->getidcategory()
         ]);
+        //atualiza as categorias no fron
+        Category::updateFile();
     }
+
+    //atualiza as categorias no font
+    public static function updateFile()
+	{
+
+		$categories = Category::listAll();
+
+		$html = [];
+
+		foreach ($categories as $row) {
+			array_push($html, '<li><a href="/categories/'.$row['idcategory'].'">'.$row['descategory'].'</a></li>');
+		}
+
+		file_put_contents($_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "categories-menu.html", implode('', $html));
+
+	}
+
+        
 
     // //metodo para salvar usuarios no banco
     // public function save()
