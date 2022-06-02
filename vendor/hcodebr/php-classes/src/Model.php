@@ -18,8 +18,8 @@ class Model {
         // var_dump($method, $filedName);
         // exit;
         switch ($method) {
-            case "get":
-                return $this->values[$fieldName];
+            case "get": //VERIFICA SE JA FOI DEFINIDA
+                return (isset($this->values[$fieldName])) ? $this->values[$fieldName] : NULL;
             break;
             case "set":
                 return $this->values[$fieldName] = $args[0];
