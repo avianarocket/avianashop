@@ -9,6 +9,9 @@ use \Slim\Slim;
 $app = new Slim();
 //passando as configs do Slim
 $app->config('debug', true);
+
+require_once("function.php");
+
 //criando as rotas SITE
 require_once("R-site.php");
 require_once("R-site-categories.php");

@@ -16,6 +16,23 @@ class Product extends Model{
 
     }
 
+	//resolve erro da ft fora do banco de dados
+	public static function checkList($list)
+	{
+
+		foreach ($list as &$row) {
+			
+			$p = new Product();
+			$p->setData($row);
+			$row = $p->getValues();
+
+		}
+
+		return $list;
+
+	}
+
+
     // //metodo para salvar categoria no banco
     public function save()
     {
