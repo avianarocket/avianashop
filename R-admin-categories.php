@@ -3,6 +3,8 @@
 use Hcode\PageAdmin;
 use Hcode\Model\User;
 use Hcode\Model\Category;
+use Hcode\Model\Product;
+use Hcode\Page;
 
 //pagina de categorias
 $app->get("/admin/categories", function(){
@@ -95,6 +97,65 @@ $app->get("/admin/categories/:idcategory/delete", function($idcategory){
 	header("Location: /admin/categories");
 	exit;
 
+});
+
+//rota relaciona categorias a produtos
+$app->get("/admin/categories/:idcategory/products", function($idcategory){
+	//verificar se esta logado
+	User::verifyLogin();
+	//Estanciar objeto
+	$category = new Category();
+	//ppeagr o idcategory
+	$category->get((int)$idcategory);
+	//estanciando objeto Page
+	$page = new PageAdmin();
+	//chamar template Riamtpl
+	$page->setTpl("categories-products", [
+		//setando dados
+		"category" => $category->getValues(),
+		"productsRelated" => $category->getProducts(),
+		"productsNotRelated" => $category->getProducts(false)
+	]);
+
+});
+
+//rota adiciona categorias a produtos
+$app->get("/admin/categories/:idcategory/products/:idproducts/add", function($idcategory, $idproduct){
+	//verificar se esta logado
+	User::verifyLogin();
+	//Estanciar objeto
+	$category = new Category();
+	//ppeagr o idcategory
+	$category->get((int)$idcategory);
+	//estancia novo produto
+	$product = new Product();
+	//pega idproduct
+	$product->get((int)$idproduct);
+
+	$category->addProduct($product);
+	//redirecionando...
+	header("Location: /admin/categories/".$idcategory."/products");
+	exit;
+
+});
+
+//rota remove categorias a produtos
+$app->get("/admin/categories/:idcategory/products/:idproducts/remove", function($idcategory, $idproduct){
+	//verificar se esta logado
+	User::verifyLogin();
+	//Estanciar objeto
+	$category = new Category();
+	//ppeagr o idcategory
+	$category->get((int)$idcategory);
+	//estancia novo produto
+	$product = new Product();
+	//pega idproduct
+	$product->get((int)$idproduct);
+
+	$category->removeProduct($product);
+	//redirecionando...
+	header("Location: /admin/categories/".$idcategory."/products");
+	exit;
 });
 
 

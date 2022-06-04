@@ -2,9 +2,11 @@
 
 use Hcode\Page;
 use Hcode\Model\Category;
+use Hcode\Model\Product;
 
 //rota Categorias home
 $app->get("/categories/:idcategory", function($idcategory){
+	//verificar se est
 	//Estanciar objeto
 	$category = new Category();
 	//ppeagr o idcategory
@@ -15,10 +17,12 @@ $app->get("/categories/:idcategory", function($idcategory){
 	$page->setTpl("category", [
 		//setando dados
 		"category" => $category->getValues(),
-		"products" => []
+		"products" => Product::checkList($category->getProducts())
 	]);
 
 });
+
+
 
 
 ?>
