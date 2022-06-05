@@ -2,18 +2,67 @@
 
 namespace Hcode\Model;
 
-use Exception;
-use Hcode\DB\Sql;
-use Hcode\Mailer;
-use Hcode\Model;
+use \Hcode\DB\Sql;
+use \Hcode\Model;
+use \Hcode\Mailer;
+use Rain\Tpl\Exception;
 
-class User extends Model{
+class User extends Model {
 
-    //constante interna da sessao
-    const SESSION = "User";
-    //constante criptografia para openssl_encrypt
-    const SECRET  = "HcodePhp7_Secret";
-    const SECRET_IV = "HcodePhp7_Secret_IV";
+	const SESSION = "User";
+	const SECRET = "HcodePhp7_Secret";
+	const SECRET_IV = "HcodePhp7_Secret_IV";
+	const ERROR = "UserError";
+	const ERROR_REGISTER = "UserErrorRegister";
+	const SUCCESS = "UserSucesss";
+
+	public static function getFromSession()
+	{
+
+		$user = new User();
+
+		if (isset($_SESSION[User::SESSION]) && (int)$_SESSION[User::SESSION]['iduser'] > 0) {
+
+			$user->setData($_SESSION[User::SESSION]);
+
+		}
+
+		return $user;
+
+	}
+
+    public static function checkLogin($inadmin = true)
+	{
+
+		if (
+			!isset($_SESSION[User::SESSION])
+			||
+			!$_SESSION[User::SESSION]
+			||
+			!(int)$_SESSION[User::SESSION]["iduser"] > 0
+		) {
+			//Não está logado
+			return false;
+
+		} else {
+
+			if ($inadmin === true && (bool)$_SESSION[User::SESSION]['inadmin'] === true) {
+
+				return true;
+
+			} else if ($inadmin === false) {
+
+				return true;
+
+			} else {
+
+				return false;
+
+			}
+
+		}
+
+	}
 
     //recebendo dados do formulario de login
     public static function login($login, $password)
@@ -52,21 +101,20 @@ class User extends Model{
 
     //verifica se usuario esta logado
     public static function verifyLogin($inadmin = true)
-    {
-        //primerio verificar se existe sessao
-        if (
-            !isset($_SESSION[User::SESSION]) //se nao existir
-            || //ou
-            !$_SESSION[User::SESSION] //se existir mas estiver vazia
-            || //ou
-            !(int)$_SESSION[User::SESSION]["iduser"] > 0 //verificar se nã é inteiro e maior que zero
-            || // ou
-            (bool)$_SESSION[User::SESSION]["inadmin"] !== $inadmin // verifica se ele é admin
-        ){
-            header("Location: /admin/login"); //redireciona pro login
-            exit;
-        }
-    }
+	{
+
+		if (!User::checkLogin($inadmin)) {
+
+			if ($inadmin) {
+				header("Location: /admin/login");
+			} else {
+				header("Location: /login");
+			}
+			exit;
+
+		}
+
+	}
 
     //deslogando usuario
     public static function logout()

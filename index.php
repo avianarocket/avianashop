@@ -16,6 +16,7 @@ require_once("function.php");
 require_once("R-site.php");
 require_once("R-site-categories.php");
 require_once("R-site-products.php");
+require_once("R-site-cart.php");
 //chamando rotas ADMIN
 require_once("R-admin.php");
 require_once("R-admin-users.php");
