@@ -15,6 +15,7 @@ require_once("function.php");
 //criando as rotas SITE
 require_once("R-site.php");
 require_once("R-site-categories.php");
+require_once("R-site-products.php");
 //chamando rotas ADMIN
 require_once("R-admin.php");
 require_once("R-admin-users.php");
