@@ -247,8 +247,12 @@ class Cart extends Model {
 			return $result;
 
 		} else {
-
-
+			//zerando dados do frete
+			$this->setnrdays(0);
+            $this->setvlfreight(0);
+            $this->setdeszipcode($nrzipcode);
+ 
+            $this->save();
 
 		}
 
