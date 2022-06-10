@@ -9,7 +9,7 @@ use \PHPMailer;
 class Mailer {
 
     const USERNAME  = "whithingotic@gmail.com";
-    const PASSWORD  = "C*ST@1956";
+    const PASSWORD  =  "qgabpoxocanywzzk";  //"C*ST@1956";
     const NAME_FROM = "Aviana Shop";
 
     private $mail;
