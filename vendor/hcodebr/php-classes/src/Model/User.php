@@ -195,7 +195,7 @@ class User extends Model {
     }
 
     //metodo recuperar email////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public static function getForgot($email)
+    public static function getForgot($email, $inadmin = true)
     {
         //chamando class Sql
         $sql = new Sql();
@@ -228,11 +228,22 @@ class User extends Model {
                 $dataRecovery = $resultsRecovery[0];
                 //criptografia da senha
                 $code = base64_encode(openssl_encrypt($dataRecovery["idrecovery"], "AES-128-CBC", pack("a16", User::SECRET), 0, pack("a16", User::SECRET_IV)));
-                //link de acesso a recuperação
-                $link = "http://www.avianashop.com.br/admin/forgot/reset?code=$code";
+
+                if ($inadmin === true) {
+
+                    //link de acesso a recuperação de senha Admin
+                    $link = "http://www.avianashop.com.br/admin/forgot/reset?code=$code";
+
+                } else {
+                    
+                    //link de acesso a recuperação de senha Site
+                    $link = "http://www.avianashop.com.br/forgot/reset?code=$code";
+
+                }
+                
                 //criando o objeto email passando os danos nas variaveis
                 //email, nome, assunto, nome do template e os dados que vai em uma array()
-                $mailer = new Mailer($data["desemail"], $data["desperson"], "Redefinição de senha da Aviana Shop", "forgot", array(
+                $mailer = new Mailer($data["desemail"], $data["desperson"], utf8_decode("Redefinição de senha da Aviana Shop"), "forgot", array(
                     //setando os dados que precisam no email
                     "name" =>$data["desperson"],
                     "link" =>$link

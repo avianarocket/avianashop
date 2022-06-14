@@ -113,5 +113,73 @@ $app->post("/register", function(){
 
 });
 
+//rota Page esqueci a senha//////////////////////////////////
+$app->get("/forgot", function(){
+	//passar valores do contrutor | desabilitar o head e footer
+	$page = new Page();
+	//desenhando pagina com o setTpl que criamos
+	$page->setTpl("forgot");	
+
+});
+
+//rota form esqueci a senha forgot
+$app->post("/forgot", function(){
+	//receber email pelo bwouser com metodo no USer
+	$user = User::getForgot($_POST["email"], false);
+	//redireciona
+	header("Location: forgot/sent");
+	//para execução
+	exit;
+
+});
+
+//rota da page forgot sent
+$app->get("/forgot/sent", function(){
+	//passar valores do contrutor | desabilitar o head e footer
+	$page = new Page();
+	//desenhando pagina com o setTpl que criamos
+	$page->setTpl("forgot-sent");
+
+});
+
+//rota da page reset
+$app->get("/forgot/reset", function(){
+	//ppegar e validar o codigo que foi no email
+	$user = User::validForgotDecrypt($_GET["code"]);
+	//passar valores do contrutor | desabilitar o head e footer
+	$page = new Page();
+	//desenhando pagina com o setTpl que criamos
+	$page->setTpl("forgot-reset", array(
+		"name"  =>$user["desperson"],
+		"code"  =>$_GET["code"]
+	));
+
+});
+
+//rota post reset
+$app->post("/forgot/reset", function(){
+	//ppegar e validar o codigo que foi no email
+	$forgot = User::validForgotDecrypt($_POST["code"]);
+	//salvado no banco de dados
+	User::setForgotUsed($forgot["idrecovery"]);
+	//carregar os dados do usuario
+	$user = new User();
+
+	$user->get((int)$forgot["iduser"]);
+	//criando hash da senha
+	$password = password_hash($_POST["password"], PASSWORD_DEFAULT, [
+		"cost" => 12
+	]);
+	//criar o rash da senha nova
+	$user->setPassword($password);
+	//chamar template
+	//passar valores do contrutor | desabilitar o head e footer
+	$page = new Page();
+	//desenhando pagina com o setTpl que criamos
+	$page->setTpl("forgot-reset-success");
+
+
+});
+
 
 ?>
