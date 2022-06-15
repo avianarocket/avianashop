@@ -7,14 +7,45 @@ use Hcode\Model\User;
 $app->get('/admin/users', function() {
 	//verifica se o admim esta logado
 	User::verifyLogin();
-	//listar todos os usuarios
-	$users = User::listAll();
+	//verifica se search existe | pagina atual
+	$search = (isset($_GET['search'])) ? $_GET['search'] : "";
+	$page 	= (isset($_GET['pege'])) ? $_GET['pege'] : 1;
+
+	if ($search != "") {
+
+		//listar os usuarios da busca
+		$pagination = User::getPageSearch($search, $page);
+		
+	} else {
+
+		//listar todos os usuarios
+		$pagination = User::getPage($page);
+
+	}
+	
+	//criando a paginação
+	$pages = [];
+
+	for ($x = 0; $x < $pagination['pages']; $x ++)
+	{
+
+		array_push($pages, [
+			"href" => "/admin/users?" . http_build_query([
+				"page"   => $x + 1,
+				"search" => $search
+			]),
+			"text" => $x + 1
+		]);
+
+	}
 	//chamando PageAdmin
 	$page = new PageAdmin();
 	//chamando template
 	$page->setTpl("users", array(
 		//pegando os valores na chave users
-		"users" => $users
+		"users"  => $pagination['data'],
+		"search" => $search,
+		"pages"  => $pages
 	));
 });
 //fim rota para listar todos os usuarios do Admin
