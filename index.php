@@ -22,6 +22,7 @@ require_once("R-admin.php");
 require_once("R-admin-users.php");
 require_once("R-admin-categories.php");
 require_once("R-admin-products.php");
+require_once("R-admin-orders.php");
 // rodar tudo o projeto
 $app->run();
 
