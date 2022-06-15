@@ -154,17 +154,22 @@ class User extends Model {
 
     //metodo para pegar o id usuario
     public function get($iduser)
-    {
-        // chama select
-        $sql = new Sql();
-        //listar o ususario pelo id
-        $results = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING(idperson) WHERE a.iduser = :iduser", array(
-            //setando valor
-            ":iduser" => $iduser
-        ));
+	{
 
-        $this->setData($results[0]);
-    }
+		$sql = new Sql();
+
+		$results = $sql->select("SELECT * FROM tb_users a INNER JOIN tb_persons b USING(idperson) WHERE a.iduser = :iduser", array(
+			":iduser"=>$iduser
+		));
+
+		$data = $results[0];
+
+		$data['desperson'] = utf8_encode($data['desperson']);
+
+
+		$this->setData($data);
+
+	}
 
     //metodo para update / salvar usuarios no banco
     public function update()
