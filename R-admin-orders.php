@@ -96,13 +96,46 @@ $app->get("/admin/orders/:idorder/delete", function($idorder){
 
     //verificando o login
     User::verifyLogin();
+    //verifica se search existe | pagina atual
+	$search = (isset($_GET['search'])) ? $_GET['search'] : "";
+	$page 	= (isset($_GET['pege'])) ? $_GET['pege'] : 1;
+
+	if ($search != "") {
+
+		//listar os usuarios da busca
+		$pagination = Order::getPageSearch($search, $page);
+		
+	} else {
+
+		//listar todos os usuarios
+		$pagination = Order::getPage($page);
+
+	}
+	
+	//criando a paginação
+	$pages = [];
+
+	for ($x = 0; $x < $pagination['pages']; $x ++)
+	{
+
+		array_push($pages, [
+			"href" => "/admin/orders?" . http_build_query([
+				"page"   => $x + 1,
+				"search" => $search
+			]),
+			"text" => $x + 1
+		]);
+
+	}	
     //criar Objeto pagina
     $page = new PageAdmin();
     //chamando o template
     $page->setTpl("orders", [
         //passando variaveis para o template
         //trazendo todos os pedidos
-        "orders" => Order::listAll()
+        "orders"  => $pagination['data'],
+		"search" => $search,
+		"pages"  => $pages
 
     ]);
 
