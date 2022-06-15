@@ -8,13 +8,47 @@ use Hcode\Model\User;
 $app->get("/admin/products" , function(){
 
     User::verifyLogin();
+    //verifica se search existe | pagina atual
+	$search = (isset($_GET['search'])) ? $_GET['search'] : "";
+	$page 	= (isset($_GET['pege'])) ? $_GET['pege'] : 1;
+
+	if ($search != "") {
+
+		//listar os usuarios da busca
+		$pagination = Product::getPageSearch($search, $page);
+		
+	} else {
+
+		//listar todos os usuarios
+		$pagination = Product::getPage($page);
+
+	}
+	
+	//criando a paginação
+	$pages = [];
+
+	for ($x = 0; $x < $pagination['pages']; $x ++)
+	{
+
+		array_push($pages, [
+			"href" => "/admin/product?" . http_build_query([
+				"page"   => $x + 1,
+				"search" => $search
+			]),
+			"text" => $x + 1
+		]);
+
+	}	
+
 
     $products = Product::listAll();    
 
     $page = new PageAdmin();
 
     $page->setTpl("products", [
-        "products" => $products
+        "products"  => $pagination['data'],
+		"search" => $search,
+		"pages"  => $pages
     ]);
 
 });
