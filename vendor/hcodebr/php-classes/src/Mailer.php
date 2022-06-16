@@ -1,115 +1,102 @@
-<?php
-//classe de envio de email
-//name epace da classe
+<?php 
+
 namespace Hcode;
-// uso das classer
+
 use Rain\Tpl;
-use \PHPMailer;
 
 class Mailer {
+	
+	const USERNAME = "cursophp7hcode@gmail.com";
+	const PASSWORD = "<?password?>";
+	const NAME_FROM = "Hcode Store";
 
-    const USERNAME  = "whithingotic@gmail.com";
-    const PASSWORD  =  "qgabpoxocanywzzk";  //"C*ST@1956";
-    const NAME_FROM = "Aviana Shop";
+	private $mail;
 
-    private $mail;
+	public function __construct($toAddress, $toName, $subject, $tplName, $data = array())
+	{
 
-    public function __construct($toAddress, $toName, $subject, $tplName, $data = array())
-    {      
+		$config = array(
+			"tpl_dir"       => $_SERVER["DOCUMENT_ROOT"]."/views/email/",
+			"cache_dir"     => $_SERVER["DOCUMENT_ROOT"]."/views-cache/",
+			"debug"         => false
+	    );
 
-    //criar e carregar o Template com Raimtpl
-    //configurando o template Rain
-    $config = array(
-        "tpl_dir"       => $_SERVER["DOCUMENT_ROOT"] . "/views/email/",
-        "cache_dir"     => $_SERVER["DOCUMENT_ROOT"] . "/views-cache/",
-        "debug"         => true // set to false to improve the speed
-    );
+		Tpl::configure( $config );
 
-    Tpl::configure( $config );
+		$tpl = new Tpl;
 
-    //criando projeto com $this para ter acesso de outras classes - Tpl object
-    $tpl = new Tpl;
-    //passar dados para o template
-    foreach ($data as $key => $value) {
-        $tpl->assign($key, $value);
-    }
-    //desenhar tela e jogar na variaver com true
-    $html = $tpl->draw($tplName, true);
-    /////////////////////////////////////////////////////////////////////////////
+		foreach ($data as $key => $value) {
+			$tpl->assign($key, $value);
+		}
 
-    //Create a new PHPMailer instance
-    $this->mail = new PHPMailer(true);
+		$html = $tpl->draw($tplName, true);
 
-    //Tell PHPMailer to use SMTP
-    $this->mail->isSMTP();
+		$this->mail = new \PHPMailer;
 
-    //Enable SMTP debugging
-    //SMTP::DEBUG_OFF = off (for production use)
-    //SMTP::DEBUG_CLIENT = client messages
-    //SMTP::DEBUG_SERVER = client and server messages
-    $this->mail->SMTPDebug = 3;
+		//Tell PHPMailer to use SMTP
+		$this->mail->isSMTP();
 
-    //Set the hostname of the mail server
-    $this->mail->Host = 'smtp.gmail.com';
-    //Use `$this->mail->Host = gethostbyname('smtp.gmail.com');`
-    //if your network does not support SMTP over IPv6,
-    //though this may cause issues with TLS
+		//Enable SMTP debugging
+		// 0 = off (for production use)
+		// 1 = client messages
+		// 2 = client and server messages
+		$this->mail->SMTPDebug = 0;
 
-    //Set the SMTP port number:
-    // - 465 for SMTP with implicit TLS, a.k.a. RFC8314 SMTPS or
-    // - 587 for SMTP+STARTTLS
-    ///////////////////////////////////////////////////
-    $this->mail->Port = 587; // so funciona com esta porta //
-    //////////////////////////////////////////////////
-    //Set the encryption mechanism to use:
-    // - SMTPS (implicit TLS on port 465) or
-    // - STARTTLS (explicit TLS on port 587)
-    $this->mail->SMTPSecure = 'tls';
+		//Ask for HTML-friendly debug output
+		$this->mail->Debugoutput = 'html';
 
-    //Whether to use SMTP authentication
-    $this->mail->SMTPAuth = true;
+		//Set the hostname of the mail server
+		$this->mail->Host = 'smtp.gmail.com';
+		// use
+		// $this->mail->Host = gethostbyname('smtp.gmail.com');
+		// if your network does not support SMTP over IPv6
 
-    //Username to use for SMTP authentication - use full email address for gmail
-    $this->mail->Username = Mailer::USERNAME;
+		//Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
+		$this->mail->Port = 587;
 
-    //Password to use for SMTP authentication
-    $this->mail->Password = Mailer::PASSWORD;
+		//Set the encryption system to use - ssl (deprecated) or tls
+		$this->mail->SMTPSecure = 'tls';
 
-    //Set who the message is to be sent from
-    //Note that with gmail you can only use your account address (same as `Username`)
-    //or predefined aliases that you have configured within your account.
-    //Do not use user-submitted addresses in here
-    $this->mail->setFrom(Mailer::USERNAME, Mailer::NAME_FROM);
+		//Whether to use SMTP authentication
+		$this->mail->SMTPAuth = true;
 
-    //Set an alternative reply-to address
-    //This is a good place to put user-submitted addresses
-    //$this->mail->addReplyTo('replyto@example.com', 'First Last');
+		//Username to use for SMTP authentication - use full email address for gmail
+		$this->mail->Username = Mailer::USERNAME;
 
-    //Set who the message is to be sent to
-    $this->mail->addAddress($toAddress, $toName);
+		//Password to use for SMTP authentication
+		$this->mail->Password = Mailer::PASSWORD;
 
-    //Set the subject line
-    $this->mail->Subject = $subject;
+		//Set who the message is to be sent from
+		$this->mail->setFrom(Mailer::USERNAME, Mailer::NAME_FROM);
 
-    //Read an HTML message body from an external file, convert referenced images to embedded,
-    //convert HTML into a basic plain-text alternative body
-    $this->mail->msgHTML($html);
+		//Set an alternative reply-to address
+		//$this->mail->addReplyTo('replyto@example.com', 'First Last');
 
-    //Replace the plain text body with one created manually
-    $this->mail->AltBody = 'This is a plain-text message body';
+		//Set who the message is to be sent to
+		$this->mail->addAddress($toAddress, $toName);
 
-    //Attach an image file
-    // $this->mail->addAttachment('images/phpmailer_mini.png');
-    
-    }
-    //metodo para enviar so qndo chamar
-    public function send()
-    {
-        return $this->mail->send();
-    }
+		//Set the subject line
+		$this->mail->Subject = $subject;
 
+		//Read an HTML message body from an external file, convert referenced images to embedded,
+		//convert HTML into a basic plain-text alternative body
+		$this->mail->msgHTML($html);
+
+		//Replace the plain text body with one created manually
+		$this->mail->AltBody = 'This is a plain-text message body';
+
+		//Attach an image file
+		//$mail->addAttachment('images/phpmailer_mini.png');
+
+	}
+
+	public function send()
+	{
+
+		return $this->mail->send();
+
+	}
 
 }
 
-
-?>
+ ?>

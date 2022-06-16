@@ -2,13 +2,11 @@
 
 namespace Hcode\DB;
 
-use PDO;
-
 class Sql {
 
-	const HOSTNAME = "127.0.0.1";
+	const HOSTNAME = "localhost";
 	const USERNAME = "root";
-	const PASSWORD = "caneta@123";
+	const PASSWORD = "zaq1xsw2cde3";
 	const DBNAME = "db_ecommerce";
 
 	private $conn;
@@ -19,10 +17,7 @@ class Sql {
 		$this->conn = new \PDO(
 			"mysql:dbname=".Sql::DBNAME.";host=".Sql::HOSTNAME, 
 			Sql::USERNAME,
-			Sql::PASSWORD,
-			array(
-				PDO::MYSQL_ATTR_INIT_COMMAND => "set names utf8" //RESOLVE PROBLEMAS DE RETORNO DE ACENTUAÇÃO DO BANCO PARA O PHP
-			)
+			Sql::PASSWORD
 		);
 
 	}

@@ -1,64 +1,65 @@
-<?php
+<?php 
 
 namespace Hcode\Model;
 
-use Hcode\DB\Sql;
-use Hcode\Model;
+use \Hcode\DB\Sql;
+use \Hcode\Model;
+use \Hcode\Mailer;
 
-class Category extends Model{    
+class Category extends Model {
 
-    //metodo para listar todas as categorias | unindo duas tabelas com JOIN A E B
-    public static function listAll()
-    {
-        //chamar o classe Sql
-        $sql = new Sql();
-        //SELECT
-        return $sql->select("SELECT * FROM tb_categories ORDER BY descategory");
+	public static function listAll()
+	{
 
-    }
+		$sql = new Sql();
 
-    // //metodo para salvar categoria no banco
-    public function save()
-    {
-        $sql = new Sql();
-        //select da procedure
-        $results = $sql->select("CALL   sp_categories_save(:idcategory, :descategory)", array(
-            ":idcategory"    => $this->getidcategory(),
-            ":descategory"     => $this->getdescategory()            
-        ));
+		return $sql->select("SELECT * FROM tb_categories ORDER BY descategory");
 
-        $this->setData($results[0]);
-        //atualiza as categorias no fron
-        Category::updateFile();     
+	}
 
-    }
+	public function save()
+	{
 
-    //metodo para pegar categoria pelo id
-    public function get($idcategory)
-    {
-        $sql = new Sql();
+		$sql = new Sql();
 
-        $results = $sql->select("SELECT * FROM tb_categories WHERE idcategory = :idcategory", [
-            ":idcategory" => $idcategory
-        ]);
+		$results = $sql->select("CALL sp_categories_save(:idcategory, :descategory)", array(
+			":idcategory"=>$this->getidcategory(),
+			":descategory"=>$this->getdescategory()
+		));
 
-        $this->setData($results[0]);
-    }
+		$this->setData($results[0]);
 
-    //metodo para deletar
-    public function delete()
-    {
-        $sql = new Sql();
+		Category::updateFile();
 
-        $sql->select("DELETE FROM tb_categories WHERE idcategory = :idcategory", [
-            ":idcategory" => $this->getidcategory()
-        ]);
-        //atualiza as categorias no fron
-        Category::updateFile();
-    }
+	}
 
-    //atualiza as categorias no font
-    public static function updateFile()
+	public function get($idcategory)
+	{
+
+		$sql = new Sql();
+
+		$results = $sql->select("SELECT * FROM tb_categories WHERE idcategory = :idcategory", [
+			':idcategory'=>$idcategory
+		]);
+
+		$this->setData($results[0]);
+
+	}
+
+	public function delete()
+	{
+
+		$sql = new Sql();
+
+		$sql->query("DELETE FROM tb_categories WHERE idcategory = :idcategory", [
+			':idcategory'=>$this->getidcategory()
+		]);
+
+		Category::updateFile();
+
+	}
+
+	public static function updateFile()
 	{
 
 		$categories = Category::listAll();
@@ -71,10 +72,9 @@ class Category extends Model{
 
 		file_put_contents($_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . "views" . DIRECTORY_SEPARATOR . "categories-menu.html", implode('', $html));
 
-	}   
-    
-    //pega produtos no admin que estao ou nao relacionados com as categorias
-    public function getProducts($related = true)
+	}
+
+	public function getProducts($related = true)
 	{
 
 		$sql = new Sql();
@@ -109,7 +109,7 @@ class Category extends Model{
 
 	}
 
-    public function getProductsPage($page = 1, $itemsPerPage = 8)
+	public function getProductsPage($page = 1, $itemsPerPage = 8)
 	{
 
 		$start = ($page - 1) * $itemsPerPage;
@@ -137,7 +137,7 @@ class Category extends Model{
 
 	}
 
-    public function addProduct(Product $product)
+	public function addProduct(Product $product)
 	{
 
 		$sql = new Sql();
@@ -148,7 +148,7 @@ class Category extends Model{
 		]);
 
 	}
-    
+
 	public function removeProduct(Product $product)
 	{
 
@@ -160,9 +160,8 @@ class Category extends Model{
 		]);
 
 	}
-
-    //paginação site produtos
-    public static function getPage($page = 1, $itemsPerPage = 10)
+			
+	public static function getPage($page = 1, $itemsPerPage = 10)
 	{
 
 		$start = ($page - 1) * $itemsPerPage;
@@ -195,17 +194,13 @@ class Category extends Model{
 
 		$results = $sql->select("
 			SELECT SQL_CALC_FOUND_ROWS *
-			FROM tb_categories            
-            WHERE descategory LIKE :search
-            ORDER BY descategory
+			FROM tb_categories 
+			WHERE descategory LIKE :search
+			ORDER BY descategory
 			LIMIT $start, $itemsPerPage;
-		",
-            [
-
-                ":search" => "%" . $search . "%"
-
-            ]
-    );
+		", [
+			':search'=>'%'.$search.'%'
+		]);
 
 		$resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal;");
 
@@ -217,7 +212,6 @@ class Category extends Model{
 
 	}
 
-
 }
 
-?>
+ ?>

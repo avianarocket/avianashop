@@ -1,22 +1,22 @@
-<?php
+<?php 
 
 namespace Hcode\Model;
 
-use Hcode\DB\Sql;
-use Hcode\Model;
+use \Hcode\DB\Sql;
+use \Hcode\Model;
+use \Hcode\Mailer;
 
-class Product extends Model{
-    //metodo para listar todas as categorias | unindo duas tabelas com JOIN A E B
-    public static function listAll()
-    {
-        //chamar o classe Sql
-        $sql = new Sql();
-        //SELECT
-        return $sql->select("SELECT * FROM tb_products ORDER BY desproduct");
+class Product extends Model {
 
-    }
+	public static function listAll()
+	{
 
-	//resolve erro da ft fora do banco de dados
+		$sql = new Sql();
+
+		return $sql->select("SELECT * FROM tb_products ORDER BY desproduct");
+
+	}
+
 	public static function checkList($list)
 	{
 
@@ -32,13 +32,12 @@ class Product extends Model{
 
 	}
 
+	public function save()
+	{
 
-    // //metodo para salvar categoria no banco
-    public function save()
-    {
-        $sql = new Sql();
-        //select da procedure
-        $results = $sql->select("CALL sp_products_save(:idproduct, :desproduct, :vlprice, :vlwidth, :vlheight, :vllength, :vlweight, :desurl)", array(
+		$sql = new Sql();
+
+		$results = $sql->select("CALL sp_products_save(:idproduct, :desproduct, :vlprice, :vlwidth, :vlheight, :vllength, :vlweight, :desurl)", array(
 			":idproduct"=>$this->getidproduct(),
 			":desproduct"=>$this->getdesproduct(),
 			":vlprice"=>$this->getvlprice(),
@@ -49,35 +48,35 @@ class Product extends Model{
 			":desurl"=>$this->getdesurl()
 		));
 
-        $this->setData($results[0]);    
+		$this->setData($results[0]);
 
-    }
+	}
 
-    //metodo para pegar categoria pelo id
-    public function get($idproduct)
-    {
-        $sql = new Sql();
+	public function get($idproduct)
+	{
 
-        $results = $sql->select("SELECT * FROM tb_products WHERE idproduct = :idproduct", [
-            ":idproduct" => $idproduct
-        ]);
+		$sql = new Sql();
 
-        $this->setData($results[0]);
-    }
+		$results = $sql->select("SELECT * FROM tb_products WHERE idproduct = :idproduct", [
+			':idproduct'=>$idproduct
+		]);
 
-    //metodo para deletar
-    public function delete()
-    {
-        $sql = new Sql();
+		$this->setData($results[0]);
 
-        $sql->select("DELETE FROM tb_products WHERE idproduct = :idproduct", [
-            ":idproduct" => $this->getidproduct()
-        ]);
+	}
 
-    } 
-    
-    //verificar se tem foto
-    public function checkPhoto()
+	public function delete()
+	{
+
+		$sql = new Sql();
+
+		$sql->query("DELETE FROM tb_products WHERE idproduct = :idproduct", [
+			':idproduct'=>$this->getidproduct()
+		]);
+
+	}
+
+	public function checkPhoto()
 	{
 
 		if (file_exists(
@@ -101,18 +100,18 @@ class Product extends Model{
 
 	}
 
-    //reutilizando getValues com parent
-    public function getValues()
-    {
-        $this->checkPhoto();
+	public function getValues()
+	{
 
-        $values = parent::getValues();
+		$this->checkPhoto();
 
-        return $values;
-    }
+		$values = parent::getValues();
 
-    //criar a imagem
-    public function setPhoto($file)
+		return $values;
+
+	}
+
+	public function setPhoto($file)
 	{
 
 		$extension = explode('.', $file['name']);
@@ -150,20 +149,19 @@ class Product extends Model{
 
 	}
 
-	//pega o produto pelo id
-	public function getFormURL($desurl)
+	public function getFromURL($desurl)
 	{
+
 		$sql = new Sql();
 
-		$row = $sql->select("SELECT * FROM tb_products WHERE desurl = :desurl LIMIT 1", [
-			':desurl' => $desurl
+		$rows = $sql->select("SELECT * FROM tb_products WHERE desurl = :desurl LIMIT 1", [
+			':desurl'=>$desurl
 		]);
 
-		$this->setData($row[0]);
+		$this->setData($rows[0]);
 
 	}
 
-	//pegar categorias relacionadas aos produtos
 	public function getCategories()
 	{
 
@@ -178,8 +176,7 @@ class Product extends Model{
 
 	}
 
-	//paginação site produtos
-    public static function getPage($page = 1, $itemsPerPage = 10)
+	public static function getPage($page = 1, $itemsPerPage = 10)
 	{
 
 		$start = ($page - 1) * $itemsPerPage;
@@ -212,17 +209,13 @@ class Product extends Model{
 
 		$results = $sql->select("
 			SELECT SQL_CALC_FOUND_ROWS *
-			FROM tb_products            
-            WHERE desproduct LIKE :search
-            ORDER BY desproduct
+			FROM tb_products 
+			WHERE desproduct LIKE :search
+			ORDER BY desproduct
 			LIMIT $start, $itemsPerPage;
-		",
-            [
-
-                ":search" => "%" . $search . "%"
-
-            ]
-    );
+		", [
+			':search'=>'%'.$search.'%'
+		]);
 
 		$resultTotal = $sql->select("SELECT FOUND_ROWS() AS nrtotal;");
 
@@ -234,6 +227,6 @@ class Product extends Model{
 
 	}
 
-    
 }
-?>
+
+ ?>

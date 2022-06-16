@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace Hcode\Model;
 
@@ -210,7 +210,7 @@ class Cart extends Model {
 				'nCdEmpresa'=>'',
 				'sDsSenha'=>'',
 				'nCdServico'=>'40010',
-				'sCepOrigem'=>'49061161',
+				'sCepOrigem'=>'09853120',
 				'sCepDestino'=>$nrzipcode,
 				'nVlPeso'=>$totals['vlweight'],
 				'nCdFormato'=>'1',
@@ -219,8 +219,7 @@ class Cart extends Model {
 				'nVlLargura'=>$totals['vlwidth'],
 				'nVlDiametro'=>'0',
 				'sCdMaoPropria'=>'S',
-				'nVlValorDeclarado'=>'0',
-				// 'nVlValorDeclarado'=>$totals['vlprice'],
+				'nVlValorDeclarado'=>$totals['vlprice'],
 				'sCdAvisoRecebimento'=>'S'
 			]);
 
@@ -247,12 +246,8 @@ class Cart extends Model {
 			return $result;
 
 		} else {
-			//zerando dados do frete
-			$this->setnrdays(0);
-            $this->setvlfreight(0);
-            $this->setdeszipcode($nrzipcode);
- 
-            $this->save();
+
+
 
 		}
 

@@ -20,17 +20,16 @@
             
             <div class="box-header">
               <a href="/admin/users/create" class="btn btn-success">Cadastrar Usuário</a>
-            </div>
-
-            <div class="box-tools">
-              <form action="/admin/users">
-                <div class="input-group input-group-sm" style="width: 150px;">
-                  <input type="text" name="search" class="form-control pull-right" placeholder="Search" value="{$search}">
-                  <div class="input-group-btn">
-                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+              <div class="box-tools">
+                <form action="/admin/users">
+                  <div class="input-group input-group-sm" style="width: 150px;">
+                    <input type="text" name="search" class="form-control pull-right" placeholder="Search" value="{$search}">
+                    <div class="input-group-btn">
+                      <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                    </div>
                   </div>
-                </div>
-              </form>
+                </form>
+              </div>
             </div>
 
             <div class="box-body no-padding">
@@ -42,17 +41,16 @@
                     <th>E-mail</th>
                     <th>Login</th>
                     <th style="width: 60px">Admin</th>
-                    <th style="width: 140px">&nbsp;</th>
+                    <th style="width: 240px">&nbsp;</th>
                   </tr>
                 </thead>
                 <tbody>
-                 <!-- laço de repetição do Rain Tpl -->
                   {loop="$users"}
                   <tr>
                     <td>{$value.iduser}</td>
                     <td>{$value.desperson}</td>
                     <td>{$value.desemail}</td>
-                    <td>{$value.deslogin}</td>
+                    <td>{$value.deslogin}</td/>
                     <td>{if="$value.inadmin == 1"}Sim{else}Não{/if}</td>
                     <td>
                       <a href="/admin/users/{$value.iduser}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Editar</a>
@@ -72,7 +70,6 @@
                 {/loop}
               </ul>
             </div>
-
           </div>
   	</div>
   </div>
